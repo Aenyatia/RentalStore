@@ -65,13 +65,13 @@ namespace RentalStore.Api.Controllers
 
 			var signInResult = await _signInManager.PasswordSignInAsync(user, command.Password, false, false);
 
-			if (signInResult.Succeeded)
+			if (!signInResult.Succeeded)
 				return BadRequest("Wrong password.");
 
 			return Ok($"{user.UserName}, you are logged.");
 		}
 
-		[HttpPost("logout")]
+		[HttpPost("signout")]
 		public async Task<IActionResult> Post()
 		{
 			await _signInManager.SignOutAsync();

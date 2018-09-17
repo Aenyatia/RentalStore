@@ -18,7 +18,10 @@ namespace RentalStore.Api.Core.Services
 
 		public Basket GetBasket(string identity)
 		{
-			return _context.Carts.Include(i => i.Items).SingleOrDefault(c => c.UserIdentity == identity);
+			return _context.Carts
+				.Include(i => i.Items)
+				.ThenInclude(i => i.Product)
+				.SingleOrDefault(c => c.UserIdentity == identity);
 		}
 
 		public void AddToBasket(AddItemToBasket command)
@@ -28,7 +31,10 @@ namespace RentalStore.Api.Core.Services
 			if (product == null)
 				throw new ArgumentException($"Product with id = {command.ProductId} does not exists.");
 
-			var basket = _context.Carts.Include(i => i.Items).SingleOrDefault(c => c.UserIdentity == command.UserIdentity);
+			var basket = _context.Carts
+				.Include(i => i.Items)
+				.ThenInclude(i => i.Product)
+				.SingleOrDefault(c => c.UserIdentity == command.UserIdentity);
 
 			if (basket == null)
 			{
