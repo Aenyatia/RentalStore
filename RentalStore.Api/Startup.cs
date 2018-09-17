@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RentalStore.Api.Core.Configurations.AutoMapper;
 using RentalStore.Api.Core.Services;
+using RentalStore.Api.Infrastructure.Data;
+using RentalStore.Api.Infrastructure.Identity;
 
 namespace RentalStore.Api
 {
@@ -21,7 +25,18 @@ namespace RentalStore.Api
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-			// register auto-mapper
+			// ef core
+			services.AddDbContext<RentalStoreContext>(options =>
+				options.UseSqlServer(Configuration.GetConnectionString("RentalStoreConnection")));
+			services.AddDbContext<IdentityContext>(options =>
+				options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
+
+			// ef core identity
+			services.AddIdentity<AppUser, IdentityRole>()
+				.AddEntityFrameworkStores<IdentityContext>()
+				.AddDefaultTokenProviders();
+
+			// auto-mapper
 			services.AddSingleton(AutoMapperConfig.Initialize());
 
 			services.AddScoped<CatalogService>();
@@ -37,6 +52,8 @@ namespace RentalStore.Api
 			{
 				app.UseHsts();
 			}
+
+			app.UseAuthentication();
 
 			app.UseHttpsRedirection();
 			app.UseMvc();

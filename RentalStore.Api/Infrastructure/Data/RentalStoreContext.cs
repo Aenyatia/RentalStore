@@ -3,18 +3,14 @@ using RentalStore.Api.Core.Domain;
 
 namespace RentalStore.Api.Infrastructure.Data
 {
-	public class StoreContext : DbContext
+	public class RentalStoreContext : DbContext
 	{
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Basket> Carts { get; set; }
 
-		public StoreContext()
+		public RentalStoreContext(DbContextOptions<RentalStoreContext> options)
+			: base(options)
 		{
-		}
-
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
 		}
 	}
 }

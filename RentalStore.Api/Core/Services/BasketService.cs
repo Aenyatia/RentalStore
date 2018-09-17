@@ -8,9 +8,9 @@ namespace RentalStore.Api.Core.Services
 {
 	public class BasketService
 	{
-		private readonly StoreContext _context;
+		private readonly RentalStoreContext _context;
 
-		public BasketService(StoreContext context)
+		public BasketService(RentalStoreContext context)
 		{
 			_context = context;
 		}
