@@ -40,6 +40,7 @@ namespace RentalStore.Api
 			services.AddSingleton(AutoMapperConfig.Initialize());
 
 			services.AddScoped<CatalogService>();
+			services.AddScoped<BasketService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
