@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalStore.Api.Infrastructure.Data;
 
 namespace RentalStore.Api.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(RentalStoreContext))]
-    partial class RentalStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20180917112921_PopulateProducts")]
+    partial class PopulateProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
