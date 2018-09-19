@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentalStore.Api.Core.Domain;
+using RentalStore.Api.Core.Domain.Cart;
+using RentalStore.Api.Core.Domain.Order;
 
 namespace RentalStore.Api.Infrastructure.Data
 {
 	public class RentalStoreContext : DbContext
 	{
 		public DbSet<Product> Products { get; set; }
-		public DbSet<Basket> Carts { get; set; }
+		public DbSet<Cart> Carts { get; set; }
+		public DbSet<Order> Orders { get; set; }
 
 		public RentalStoreContext(DbContextOptions<RentalStoreContext> options)
 			: base(options)

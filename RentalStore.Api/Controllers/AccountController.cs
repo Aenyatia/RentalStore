@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RentalStore.Api.Core.Commands.Account;
-using RentalStore.Api.Infrastructure.Identity;
-using System.Linq;
+using RentalStore.Api.Core.Services.Account;
 using System.Threading.Tasks;
 
 namespace RentalStore.Api.Controllers
@@ -11,72 +9,60 @@ namespace RentalStore.Api.Controllers
 	[ApiController]
 	public class AccountController : ControllerBase
 	{
-		private readonly UserManager<AppUser> _userManager;
-		private readonly SignInManager<AppUser> _signInManager;
+		private readonly AccountCommandService _accountCommandService;
+		private readonly AccountQueryService _accountQueryService;
 
-		public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+		public AccountController(
+			AccountCommandService accountCommandService,
+			AccountQueryService accountQueryService)
 		{
-			_userManager = userManager;
-			_signInManager = signInManager;
+			_accountCommandService = accountCommandService;
+			_accountQueryService = accountQueryService;
 		}
 
-		[HttpGet]
-		public IActionResult Get()
-		{
-			var users = _userManager.Users;
-
-			return Ok(users);
-		}
-
+		// GET api/account/{email}
 		[HttpGet("{email}")]
-		public IActionResult Get(string email)
+		public async Task<IActionResult> Get(string email)
 		{
-			var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
+			var userDto = await _accountQueryService.GetUserByEmailAsync(email);
 
-			return Ok(user);
+			if (userDto == null)
+				return NotFound();
+
+			return Ok(userDto);
 		}
 
+		// POST api/account/signup
 		[HttpPost("signup")]
-		public async Task<IActionResult> Post([FromBody]CreateAppUser command)
+		public async Task<IActionResult> Post([FromBody]CreateUser command)
 		{
-			var user = new AppUser
-			{
-				UserName = command.Name,
-				Email = command.Email
-			};
+			var result = await _accountCommandService.SignUpAsync(command);
 
-			var identityResult = await _userManager.CreateAsync(user, command.Password);
+			if (!result.IsValid)
+				return BadRequest(result.Errors);
 
-			if (!identityResult.Succeeded)
-				return BadRequest(identityResult.Errors);
-
-			return Created($"/api/account/{command.Email}", user);
+			return Created($"/api/account/{command.Email}", "Sign up");
 		}
 
+		// POST api/account/signin
 		[HttpPost("signin")]
 		public async Task<IActionResult> Post([FromBody]SignIn command)
 		{
-			var user = await _userManager.FindByEmailAsync(command.Email);
+			var result = await _accountCommandService.SignInAsync(command);
 
-			if (user == null)
-				return BadRequest($"User with email {command.Email} does not exists.");
+			if (!result.IsValid)
+				return BadRequest(result.Errors);
 
-			await _signInManager.SignOutAsync();
-
-			var signInResult = await _signInManager.PasswordSignInAsync(user, command.Password, false, false);
-
-			if (!signInResult.Succeeded)
-				return BadRequest("Wrong password.");
-
-			return Ok($"{user.UserName}, you are logged.");
+			return Ok("Sign in.");
 		}
 
+		// POST api/account/signout
 		[HttpPost("signout")]
 		public async Task<IActionResult> Post()
 		{
-			await _signInManager.SignOutAsync();
+			await _accountCommandService.SignOutAsync();
 
-			return Ok("Logout");
+			return Ok("Sign out.");
 		}
 	}
 }

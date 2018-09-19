@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RentalStore.Api.Core.Configurations.AutoMapper;
-using RentalStore.Api.Core.Services;
+using RentalStore.Api.Core.Services.Account;
+using RentalStore.Api.Core.Services.Cart;
+using RentalStore.Api.Core.Services.Catalog;
+using RentalStore.Api.Core.Services.Order;
 using RentalStore.Api.Infrastructure.Data;
 using RentalStore.Api.Infrastructure.Identity;
 
@@ -23,7 +26,9 @@ namespace RentalStore.Api
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			services.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			//.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
 			// ef core
 			services.AddDbContext<RentalStoreContext>(options =>
@@ -32,15 +37,21 @@ namespace RentalStore.Api
 				options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
 
 			// ef core identity
-			services.AddIdentity<AppUser, IdentityRole>()
+			services.AddIdentity<User, IdentityRole>()
 				.AddEntityFrameworkStores<IdentityContext>()
 				.AddDefaultTokenProviders();
 
 			// auto-mapper
 			services.AddSingleton(AutoMapperConfig.Initialize());
 
+			services.AddScoped<AccountCommandService>();
+			services.AddScoped<AccountQueryService>();
+
 			services.AddScoped<CatalogService>();
-			services.AddScoped<BasketService>();
+			services.AddScoped<CartService>();
+			services.AddScoped<OrderService>();
+
+			services.AddScoped<RentalStoreContext>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)

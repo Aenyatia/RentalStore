@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RentalStore.Api.Core.Services;
+using RentalStore.Api.Core.Services.Catalog;
 
 namespace RentalStore.Api.Controllers
 {

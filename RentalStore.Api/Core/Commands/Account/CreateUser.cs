@@ -1,6 +1,6 @@
 ﻿namespace RentalStore.Api.Core.Commands.Account
 {
-	public class CreateAppUser
+	public class CreateUser
 	{
 		public string Name { get; set; }
 		public string Email { get; set; }

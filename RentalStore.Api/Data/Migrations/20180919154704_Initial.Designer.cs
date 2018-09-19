@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalStore.Api.Infrastructure.Data;
 
-namespace RentalStore.Api.Infrastructure.Data.Migrations
+namespace RentalStore.Api.Data.Migrations
 {
     [DbContext(typeof(RentalStoreContext))]
-    partial class RentalStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20180919154704_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,26 +21,26 @@ namespace RentalStore.Api.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("RentalStore.Api.Core.Domain.Basket", b =>
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Cart.Cart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("UserIdentity");
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("RentalStore.Api.Core.Domain.BasketItem", b =>
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Cart.CartItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BasketId");
+                    b.Property<int?>("CartId");
 
                     b.Property<int?>("ProductId");
 
@@ -46,11 +48,64 @@ namespace RentalStore.Api.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BasketId");
+                    b.HasIndex("CartId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketItem");
+                    b.ToTable("CartItem");
+                });
+
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Order.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Street");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Address");
+                });
+
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Order.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("AddressId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Order.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("OrderId");
+
+                    b.Property<decimal>("Price");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<int>("Quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("RentalStore.Api.Core.Domain.Product", b =>
@@ -87,15 +142,29 @@ namespace RentalStore.Api.Infrastructure.Data.Migrations
                     );
                 });
 
-            modelBuilder.Entity("RentalStore.Api.Core.Domain.BasketItem", b =>
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Cart.CartItem", b =>
                 {
-                    b.HasOne("RentalStore.Api.Core.Domain.Basket")
+                    b.HasOne("RentalStore.Api.Core.Domain.Cart.Cart")
                         .WithMany("Items")
-                        .HasForeignKey("BasketId");
+                        .HasForeignKey("CartId");
 
                     b.HasOne("RentalStore.Api.Core.Domain.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
+                });
+
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Order.Order", b =>
+                {
+                    b.HasOne("RentalStore.Api.Core.Domain.Order.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+                });
+
+            modelBuilder.Entity("RentalStore.Api.Core.Domain.Order.OrderItem", b =>
+                {
+                    b.HasOne("RentalStore.Api.Core.Domain.Order.Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId");
                 });
 #pragma warning restore 612, 618
         }

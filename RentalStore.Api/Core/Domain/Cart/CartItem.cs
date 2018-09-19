@@ -1,6 +1,6 @@
-﻿namespace RentalStore.Api.Core.Domain
+﻿namespace RentalStore.Api.Core.Domain.Cart
 {
-	public class BasketItem
+	public class CartItem
 	{
 		public int Id { get; set; }
 		public Product Product { get; set; }

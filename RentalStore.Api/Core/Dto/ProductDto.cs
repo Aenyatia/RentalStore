@@ -2,7 +2,6 @@
 {
 	public class ProductDto
 	{
-		public int ProductId { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string Genre { get; set; }

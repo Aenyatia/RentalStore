@@ -2,7 +2,7 @@
 
 namespace RentalStore.Api.Infrastructure.Identity
 {
-	public class AppUser : IdentityUser
+	public class User : IdentityUser
 	{
 	}
 }
